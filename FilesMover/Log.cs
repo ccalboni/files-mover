@@ -18,9 +18,11 @@ namespace FilesMover
         /// </summary>
         public enum Severity
         {
+            Trace,
             Information,
             Warning,
             Error,
+            Critical
         }
 
         /// <summary>
@@ -70,6 +72,11 @@ namespace FilesMover
             Log.Write(Severity.Warning, messageFormat, args);
         }
 
+        public static void Trace(string messageFormat, params string[] args)
+        {
+            Log.Write(Severity.Trace, messageFormat, args);
+        }
+
         /// <summary>
         /// Private method that actually writes to console and log file
         /// </summary>
@@ -78,42 +85,47 @@ namespace FilesMover
         {
             var severityIdentifier = string.Empty;
             ConsoleColor consoleColor;
-            ConsoleColor consoleBackgroundColor;
+            //ConsoleColor consoleBackgroundColor;
             var message = string.Format(messageFormat, args);
 
             switch (severity)
             {
                 case Severity.Error:
                     severityIdentifier = "ERR";
-                    consoleColor = ConsoleColor.Red;
-                    consoleBackgroundColor = ConsoleColor.Black;
+                    consoleColor = ConsoleColor.DarkRed;
+                    //consoleBackgroundColor = ConsoleColor.Black;
                     break;
                 case Severity.Warning:
                     severityIdentifier = "WAR";
-                    consoleColor = ConsoleColor.Yellow;
-                    consoleBackgroundColor = ConsoleColor.Black;
+                    consoleColor = ConsoleColor.DarkYellow;
+//                    consoleBackgroundColor = ConsoleColor.Black;
+                    break;
+                case Severity.Trace:
+                    severityIdentifier = "TRC";
+                    consoleColor = ConsoleColor.Gray;
                     break;
                 default:
                     severityIdentifier = "INF";
                     consoleColor = ConsoleColor.White;
-                    consoleBackgroundColor = ConsoleColor.Black;
+//                    consoleBackgroundColor = ConsoleColor.Black;
                     break;
             }
 
             var consoleBackupColor = Console.ForegroundColor;
-            var consoleBackupBackgroundColor = Console.BackgroundColor;
+//            var consoleBackupBackgroundColor = Console.BackgroundColor;
             Console.ForegroundColor = consoleColor;
-            Console.BackgroundColor = consoleBackgroundColor;
-            Console.WriteLine(DateTime.Now.ToString("[HH:mm:ss] ") + message);
+//            Console.BackgroundColor = consoleBackgroundColor;
+            Console.WriteLine(string.Format("'[{0:HH:mm:ss}] [{1}] {2}", DateTime.Now, severityIdentifier, message));
             Console.ForegroundColor = consoleBackupColor;
-            Console.BackgroundColor = consoleBackupBackgroundColor;
+//            Console.BackgroundColor = consoleBackupBackgroundColor;
 
             //everything is written to file
             if (_logFilePath == null)
             {
                 _logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
             }
-            File.AppendAllText(_logFilePath, DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss] ") + message + Environment.NewLine);
+            File.AppendAllText(_logFilePath, string.Format("'[{0:yyyy-MM-dd HH:mm:ss}] [{1}] {2}{3}", 
+                    DateTime.Now, severityIdentifier, message, Environment.NewLine));
         }
 
 

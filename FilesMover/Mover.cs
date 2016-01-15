@@ -41,7 +41,7 @@ namespace FilesMover
             {
                 if (!action.Overwrite)
                 {
-                    Log.Warning("Destination file exists, rule set to NOT overwrite it: '{0}'", action.DestinationFilePath);
+                    Log.Warning("Destination file exists, rule set to not overwrite it: '{0}'", action.DestinationFilePath);
                     return;
                 }
                 else
